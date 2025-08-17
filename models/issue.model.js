@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const issueSchema = new mongoose.Schema({
   item: { type: mongoose.Schema.Types.ObjectId, ref: 'Item', required: true },
   name: String,
+  issued_to: String,
   date: { type: Date, default: Date.now },
   quantity: { type: Number, required: true, min: 1 },
   approvingAuthority: String,

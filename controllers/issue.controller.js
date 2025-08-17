@@ -4,10 +4,11 @@ const Item = require('../models/item.model');
 
 exports.issueItem = async (req, res) => {
   try {
-    const { item, quantity, name, date, approvingAuthority, category, issueTime, condition } = req.body;
+    const { item, quantity, name, issued_to,date, approvingAuthority, category, issueTime, condition } = req.body;
+    console.log('issueItem body:', req.body);
     const qty = Number(quantity);
     if (!item || !Number.isFinite(qty) || qty <= 0) return res.status(400).json({ message: 'Invalid item or quantity' });
-    if (!name ||  !approvingAuthority || !category ) return res.status(400).json({ message: 'Missing required fields' });
+    if (!name ||  !approvingAuthority || !category  || !issued_to) return res.status(400).json({ message: 'Missing required fields' });
 
     const updated = await Item.findOneAndUpdate(
       { _id: item, quantity: { $gte: qty } },
@@ -26,10 +27,10 @@ exports.issueItem = async (req, res) => {
 
 exports.unissueItem = async (req, res) => {
   try {
-    const { item, quantity, originalIssue, name, date, approvingAuthority, category, issueTime, condition } = req.body;
+    const { item, quantity, originalIssue, name,issued_to, date, approvingAuthority, category, issueTime, condition } = req.body;
     const qty = Number(quantity);
     if (!item || !Number.isFinite(qty) || qty <= 0) return res.status(400).json({ message: 'Invalid item or quantity' });
-    if (!name || !approvingAuthority || !category ) return res.status(400).json({ message: 'Missing required fields' });
+    if (!name || !approvingAuthority || !category || !issued_to) return res.status(400).json({ message: 'Missing required fields' });
 
     const updated = await Item.findOneAndUpdate(
       { _id: item },
@@ -84,6 +85,7 @@ exports.unissueById = async (req, res) => {
 }
 exports.getIssues = async (req, res) => {
   const filters = { user: req.userId, ...req.query };
+  console.log(req.query, req.body,'iwedugiwehdowehdwehu')
   // allow filtering by action=ISSUE|UNISSUE, item, date, etc.
   const issues = await Issue.find(filters);
   res.json(issues);
